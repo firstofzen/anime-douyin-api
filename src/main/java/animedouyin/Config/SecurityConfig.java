@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .authorizeExchange(exc -> {
                     exc.pathMatchers("/getAllVideo", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked").permitAll();
                     exc.anyExchange().authenticated();
+
                 })
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Client(Customizer.withDefaults())

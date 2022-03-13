@@ -24,7 +24,8 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity security) {
         return security.csrf().disable()
                 .authorizeExchange(exc -> {
-                    exc.pathMatchers("/redirect").authenticated();
+                    exc.pathMatchers("/getAllVideo", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked").permitAll();
+                    exc.anyExchange().authenticated();
                 })
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Client(Customizer.withDefaults())

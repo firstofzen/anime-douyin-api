@@ -36,7 +36,6 @@ public class HomeHandler {
         var oidcUser = (DefaultOidcUser) securityContext.getAuthentication().getPrincipal();
         var map = new HashMap<String, Object>();
         map.put("image", oidcUser.getUserInfo().getPicture());
-        map.put("name", oidcUser.getUserInfo().getFullName());
         var nottifi = new ArrayList<JSONObject>();
         var jsonObj = new JSONObject();
         jsonObj.appendField("isRead", "false");
@@ -46,10 +45,11 @@ public class HomeHandler {
                 .refreshToken(UUID.randomUUID().toString())
                 .attributes(map)
                 .email(oidcUser.getUserInfo().getEmail())
-                .listFriend(new JSONArray())
+                .listFriend(new ArrayList<>())
                 .notification(nottifi)
-                .queueAddFr(new JSONArray())
+                .queueAddFr(new ArrayList<>())
                 .videosLiked(new ArrayList<>())
+                .name(oidcUser.getUserInfo().getFullName())
                 .build());
     }
 
@@ -73,5 +73,9 @@ public class HomeHandler {
 
     public Mono<ServerResponse> deleteUser(ServerRequest serverRequest) {
         return userCrud.deleteUser(String.valueOf(serverRequest.queryParam("email"))).flatMap(reslt -> ServerResponse.ok().bodyValue(reslt)).switchIfEmpty(ServerResponse.badRequest().build());
+    }
+
+    public Mono<ServerResponse> searchFrByPrefixName(ServerRequest serverRequest) {
+        return null;
     }
 }

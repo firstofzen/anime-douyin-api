@@ -31,4 +31,8 @@ public class HomeRouter {
     public RouterFunction<ServerResponse> deleteUser(HomeHandler homeHandler) {
         return route().DELETE("/deleteUser", homeHandler::deleteUser).build();
     }
+    @Bean
+    public RouterFunction<ServerResponse> searchFrByName(HomeHandler homeHandler) {
+        return route().GET("/searchFrByPrefixName", homeHandler::searchFrByPrefixName).build();
+    }
 }

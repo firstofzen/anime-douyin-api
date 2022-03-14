@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity security) {
         return security.csrf().disable()
                 .authorizeExchange(exc -> {
-                    exc.pathMatchers("/getAllVideo", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked").permitAll();
+                    exc.pathMatchers("/getAllVideo","/getAllFriend", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked").permitAll();
                     exc.anyExchange().authenticated();
 
                 })

@@ -24,12 +24,12 @@ public class UserAccount implements OAuth2User{
     private @Field("roles") List<String> roles;
     private @Field("refreshToken") String refreshToken;
     private @Field("email") String email;
-    private @Field("listFriend") JSONArray listFriend;
-    private @Field("queueAddFr") JSONArray queueAddFr;
+    private @Field("listFriend") ArrayList<String> listFriend;
+    private @Field("queueAddFr") ArrayList<String> queueAddFr;
     private @Field("notification") ArrayList<JSONObject> notification;
     private @Field("videosLiked") ArrayList<String> videosLiked;
     private @Field("attributes") Map<String, Object> attributes;
-
+    private @Field("name") String name;
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
@@ -41,7 +41,5 @@ public class UserAccount implements OAuth2User{
     }
 
     @Override
-    public String getName() {
-        return attributes.get("name").toString();
-    }
+    public String getName() {return name;}
 }

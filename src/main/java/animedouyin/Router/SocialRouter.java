@@ -27,7 +27,15 @@ public class SocialRouter {
 
     @Bean
     public RouterFunction<ServerResponse> getFrQueue(SocialHandler socialHandler) {
-        return route().GET("/getFrQueue", socialHandler::getFrQueue).build();
+        return route().GET("/getQueueFr", socialHandler::getFrQueue).build();
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> getAllFriend(SocialHandler socialHandler) {
+        return route().GET("/getAllFriend", socialHandler::getAllFriend).build();
+    }
+    @Bean
+    public RouterFunction<ServerResponse> unAddFrReq(SocialHandler socialHandler) {
+        return route().DELETE("/unAddFrReq", socialHandler::unAddFrReq).build();
+    }
 }

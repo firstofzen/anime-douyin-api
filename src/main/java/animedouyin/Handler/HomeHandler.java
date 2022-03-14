@@ -54,7 +54,7 @@ public class HomeHandler {
     }
 
     public Mono<ServerResponse> getUserInfo(ServerRequest request) {
-        return userCrud.getUser(String.valueOf(request.queryParam("email"))).doOnError(Throwable::printStackTrace).flatMap(usr -> {
+        return userCrud.getUser(request.queryParam("email").get()).doOnError(Throwable::printStackTrace).flatMap(usr -> {
             var json = new JSONObject();
             json.appendField("name", usr.getName());
             json.appendField("refreshToken", usr.getRefreshToken());

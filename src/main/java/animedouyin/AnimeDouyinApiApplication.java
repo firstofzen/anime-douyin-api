@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.web.reactive.function.server.RouterFunctions.route;
+
 @SpringBootApplication
 public class AnimeDouyinApiApplication {
     @Value("${cloudinary.cloud-name}")
@@ -17,7 +19,6 @@ public class AnimeDouyinApiApplication {
     private String apiKey;
     @Value("${cloudinary.api-secret}")
     private String apiSecret;
-
     public static void main(String[] args) {
         SpringApplication.run(AnimeDouyinApiApplication.class, args);
     }

@@ -16,11 +16,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,11 +48,12 @@ public class UserCrud {
             return mongoTemplate.save(Mono.just(userAccount), "UserAccount");
         });
     }
+
     public Mono<DeleteResult> deleteUser(String email) {
         return mongoTemplate.remove(Query.query(Criteria.where("email").is(email)), UserAccount.class, "UserAccount");
     }
 
-    public Mono<ArrayList<String>> addFriend(@NonNull String email,@NonNull String emailFriend) {
+    public Mono<ArrayList<String>> addFriend(@NonNull String email, @NonNull String emailFriend) {
         return this.getUser(email).flatMap(userInfo -> {
             var upda = new Update();
             var listFr = userInfo.getListFriend();
@@ -59,28 +62,30 @@ public class UserCrud {
             return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upda, UserAccount.class, "UserAccount").map(reslt -> listFr);
         });
     }
-    public Mono<ArrayList<String>> unFriend(@NonNull String email,@NonNull String emailFriend) {
-       return this.getUser(email).flatMap(userInfo -> {
-           var upd = new Update();
-           var listFr = userInfo.getListFriend();
-           listFr.remove(emailFriend);
-           upd.set("listFriend", listFr);
-           return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)),upd, UserAccount.class, "UserAccount").map(reslt -> listFr);
-       });
+
+    public Mono<ArrayList<String>> unFriend(@NonNull String email, @NonNull String emailFriend) {
+        return this.getUser(email).flatMap(userInfo -> {
+            var upd = new Update();
+            var listFr = userInfo.getListFriend();
+            listFr.remove(emailFriend);
+            upd.set("listFriend", listFr);
+            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upd, UserAccount.class, "UserAccount").map(reslt -> listFr);
+        });
     }
-    public Mono<ArrayList<String>> addFriendToQueue(@NonNull String email,@NonNull String emailFriend) {
+
+    public Mono<ArrayList<String>> addFriendToQueue(@NonNull String email, @NonNull String emailFriend) {
         return this.getUser(email).flatMap(userInfo -> {
             var upda = new Update();
             var queueFr = userInfo.getQueueAddFr();
             var notifi = userInfo.getNotification();
             queueFr.add(emailFriend);
             var isRead = notifi.get(0);
-            if(isRead.getAsString("isRead").equals("false")) {
+            if (isRead.getAsString("isRead").equals("false")) {
                 var jsonObj1__ = new JSONObject();
                 jsonObj1__.appendField("isRead", "true");
-                notifi.set(0,jsonObj1__);
+                notifi.set(0, jsonObj1__);
             }
-            var jsonObj1= new JSONObject();
+            var jsonObj1 = new JSONObject();
             var jsonObj1_ = new JSONObject();
             jsonObj1_.appendField("name", userInfo.getName());
             jsonObj1_.appendField("email", userInfo.getEmail());
@@ -91,6 +96,7 @@ public class UserCrud {
             return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upda, UserAccount.class, "UserAccount").map(reslt -> queueFr);
         });
     }
+
     public Mono<ArrayList<String>> getFrQueue(String email) {
         return this.getUser(email).map(UserAccount::getQueueAddFr);
     }
@@ -119,22 +125,30 @@ public class UserCrud {
         });
     }
 
-    public Mono<ArrayList<String>> unAddFrReq(@NonNull String email,@NonNull String emailFr) {
+    public Mono<ArrayList<String>> unAddFrReq(@NonNull String email, @NonNull String emailFr) {
         AtomicReference<ArrayList<String>> list = new AtomicReference<>();
         return this.getUser(emailFr).flatMap(usrFr -> {
             var queueFr = usrFr.getQueueAddFr();
             var upd = new Update();
             queueFr.forEach(ele -> {
-                if(ele.equals(email)){queueFr.remove(email);};
+                if (ele.equals(email)) {
+                    queueFr.remove(email);
+                }
+                ;
             });
             upd.set("queueAddFr", queueFr);
             list.set(queueFr);
-            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(emailFr)),upd, UserAccount.class);
+            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(emailFr)), upd, UserAccount.class);
         }).map(updR -> list.get());
     }
 
-    public Mono<ArrayList<JSONObject>> getUserByPrefixName(@NonNull String prefix) {
-        var listUser = new ArrayList<JSONObject>();
-        return null;
+    public Flux<JSONObject> getUserByPrefixName(@NonNull String prefix) {
+        return mongoTemplate.find(Query.query(Criteria.where("name").regex("^" + prefix)), UserAccount.class, "UserAccount").map(ele -> {
+            var jsonObj = new JSONObject();
+            jsonObj.appendField("image", ele.getAttributes().get("image").toString());
+            jsonObj.appendField("name", ele.getName());
+            jsonObj.appendField("email", ele.getEmail());
+            return jsonObj;
+        });
     }
 }

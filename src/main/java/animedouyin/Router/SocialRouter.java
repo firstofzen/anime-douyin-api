@@ -27,7 +27,7 @@ public class SocialRouter {
 
     @Bean
     public RouterFunction<ServerResponse> getFrQueue(SocialHandler socialHandler) {
-        return route().GET("/getQueueFr", socialHandler::getFrQueue).build();
+        return route().GET("/getQueueFr", socialHandler::getQueueFr).build();
     }
 
     @Bean

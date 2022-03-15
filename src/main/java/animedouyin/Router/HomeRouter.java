@@ -33,6 +33,6 @@ public class HomeRouter {
     }
     @Bean
     public RouterFunction<ServerResponse> searchFrByName(HomeHandler homeHandler) {
-        return route().GET("/searchFrByPrefixName", homeHandler::searchFrByPrefixName).build();
+        return route().GET("/searchUsrByPrefixName", homeHandler::searchFrByPrefixName).build();
     }
 }

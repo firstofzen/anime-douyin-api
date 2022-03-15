@@ -38,13 +38,12 @@ public class SocialHandler {
         }));
     }
 
-    public Mono<ServerResponse> getFrQueue(ServerRequest request) {
+    public Mono<ServerResponse> getQueueFr(ServerRequest request) {
         return userCrud.getFrQueue(request.queryParam("email").get()).flatMap(list -> {
             var reslt = this.convertRespFr(list);
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
         });
     }
-
     private JSONArray convertRespFr(ArrayList<String> list) {
         var jsonArr = new JSONArray();
         list.forEach(ele -> {
@@ -63,7 +62,6 @@ public class SocialHandler {
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
         });
     }
-
     public Mono<ServerResponse> unAddFrReq(ServerRequest serverRequest) {
         return userCrud.unAddFrReq(serverRequest.queryParam("email").get(), serverRequest.queryParam("emailFr").get()).flatMap(list -> ServerResponse.ok().bodyValue(list));
     }

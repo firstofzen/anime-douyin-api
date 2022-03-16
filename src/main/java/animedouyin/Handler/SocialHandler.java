@@ -19,7 +19,11 @@ public class SocialHandler {
     private final UserCrud userCrud;
     public Mono<ServerResponse> addFriend(ServerRequest request) {
         return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.addFriend(req.getEmail(), req.getEmailFriend())).flatMap(list -> {
-            var reslt = this.convertRespFr(list);
+            var listFr = this.convertRespFr(list.get(0));
+            var queueFr = this.convertRespFr(list.get(1));
+            var reslt = new JSONObject();
+            reslt.appendField("listFriend", listFr);
+            reslt.appendField("queueFriend", queueFr);
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
         });
     }
@@ -51,6 +55,7 @@ public class SocialHandler {
                 var jsonObj = new JSONObject();
                 jsonObj.appendField("name" , usr.getName());
                 jsonObj.appendField("image", usr.getAttributes().get("image").toString());
+                jsonObj.appendField("email", usr.getEmail());
                 jsonArr.appendElement(jsonObj);
             }).subscribe();
         });

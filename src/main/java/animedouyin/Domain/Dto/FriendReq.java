@@ -9,6 +9,5 @@ import lombok.Setter;
 @Setter
 public class FriendReq {
     private String email;
-    private String image;
     private String emailFriend;
 }

@@ -20,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -53,24 +54,34 @@ public class UserCrud {
         return mongoTemplate.remove(Query.query(Criteria.where("email").is(email)), UserAccount.class, "UserAccount");
     }
 
-    public Mono<ArrayList<String>> addFriend(@NonNull String email, @NonNull String emailFriend) {
+    public Mono<List<ArrayList<String>>> addFriend(@NonNull String email, @NonNull String emailFriend) {
         return this.getUser(email).flatMap(userInfo -> {
             var upda = new Update();
             var listFr = userInfo.getListFriend();
+            var queueFr = userInfo.getQueueAddFr();
             listFr.add(emailFriend);
+            queueFr.removeIf(ele -> ele.equals(emailFriend));
             upda.set("listFriend", listFr);
-            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upda, UserAccount.class, "UserAccount").map(reslt -> listFr);
+            upda.set("queueAddFr", queueFr);
+            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upda, UserAccount.class, "UserAccount").map(reslt -> List.of(listFr, queueFr));
         });
     }
 
     public Mono<ArrayList<String>> unFriend(@NonNull String email, @NonNull String emailFriend) {
-        return this.getUser(email).flatMap(userInfo -> {
-            var upd = new Update();
+        return this.getUser(emailFriend).flatMap(userInfo -> {
             var listFr = userInfo.getListFriend();
-            listFr.remove(emailFriend);
+            listFr.remove(email);
+            var upd = new Update();
             upd.set("listFriend", listFr);
-            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upd, UserAccount.class, "UserAccount").map(reslt -> listFr);
-        });
+            return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(emailFriend)),upd,UserAccount.class, "UserAccount");
+        }).flatMap(rsud ->
+                this.getUser(email).flatMap(userInfo -> {
+                    var upd = new Update();
+                    var listFr = userInfo.getListFriend();
+                    listFr.remove(emailFriend);
+                    upd.set("listFriend", listFr);
+                    return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(email)), upd, UserAccount.class, "UserAccount").map(reslt -> listFr);
+                }));
     }
 
     public Mono<ArrayList<String>> addFriendToQueue(@NonNull String email, @NonNull String emailFriend) {

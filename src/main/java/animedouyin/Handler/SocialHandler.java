@@ -36,10 +36,7 @@ public class SocialHandler {
     }
 
     public Mono<ServerResponse> addFrToQueue(ServerRequest request) {
-        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.addFriendToQueue(req.getEmail(), req.getEmailFriend()).flatMap(list -> {
-            var reslt = this.convertRespFr(list);
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
-        }));
+        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.addFriendToQueue(req.getEmail(), req.getEmailFriend()).flatMap(list -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(list)));
     }
 
     public Mono<ServerResponse> getQueueFr(ServerRequest request) {

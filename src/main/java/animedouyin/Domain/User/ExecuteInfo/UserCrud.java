@@ -141,12 +141,7 @@ public class UserCrud {
         return this.getUser(emailFr).flatMap(usrFr -> {
             var queueFr = usrFr.getQueueAddFr();
             var upd = new Update();
-            queueFr.forEach(ele -> {
-                if (ele.equals(email)) {
-                    queueFr.remove(email);
-                }
-                ;
-            });
+            queueFr.removeIf(ele -> ele.equals(email));
             upd.set("queueAddFr", queueFr);
             list.set(queueFr);
             return mongoTemplate.updateFirst(Query.query(Criteria.where("email").is(emailFr)), upd, UserAccount.class);
@@ -159,6 +154,8 @@ public class UserCrud {
             jsonObj.appendField("image", ele.getAttributes().get("image").toString());
             jsonObj.appendField("name", ele.getName());
             jsonObj.appendField("email", ele.getEmail());
+            jsonObj.appendField("listFriend", ele.getListFriend());
+            jsonObj.appendField("queueFriend", ele.getQueueAddFr());
             return jsonObj;
         });
     }

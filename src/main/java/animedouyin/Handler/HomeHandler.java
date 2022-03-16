@@ -58,6 +58,11 @@ public class HomeHandler {
             var json = new JSONObject();
             json.appendField("name", usr.getName());
             json.appendField("refreshToken", usr.getRefreshToken());
+            json.appendField("image", usr.getAttributes().get("image"));
+            json.appendField("listFriend",usr.getListFriend());
+            json.appendField("queueAddFr", usr.getQueueAddFr());
+            json.appendField("notification", usr.getNotification());
+            json.appendField("videosLiked", usr.getVideosLiked());
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(json);
         }).doOnError(Throwable::printStackTrace).switchIfEmpty(ServerResponse.badRequest().build());
     }

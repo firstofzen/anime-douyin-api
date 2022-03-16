@@ -22,7 +22,7 @@ public class SocialRouter {
 
     @Bean
     public RouterFunction<ServerResponse> addFrQueue(SocialHandler socialHandler) {
-        return route().POST("/queueAddFr", socialHandler::addFrToQueue).build();
+        return route().POST("/addFrToQueue", socialHandler::addFrToQueue).build();
     }
 
     @Bean

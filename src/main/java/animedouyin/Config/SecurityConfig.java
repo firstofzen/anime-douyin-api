@@ -24,9 +24,8 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity security) {
         return security.csrf().disable()
                 .authorizeExchange(exc -> {
-                    exc.pathMatchers("/getAllVideo","/getAllFriend","/searchUsrByPrefixName", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked", "/getListFr", "/getQueueFr").permitAll();
+                    exc.pathMatchers("/getAllVideo","/getAllFriend","/searchUsrByPrefixName", "/getUserInfo", "/addAllVideo", "/updateTym", "/updateComment", "/unTym", "/feedBack", "/getAllVideoLiked", "/getQueueFr", "/addFrToQueue").permitAll();
                     exc.anyExchange().authenticated();
-
                 })
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Client(Customizer.withDefaults())

@@ -29,14 +29,11 @@ public class SocialHandler {
     }
 
     public Mono<ServerResponse> unFriend(ServerRequest request) {
-        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.unFriend(req.getEmail(), req.getEmailFriend())).flatMap(list -> {
-            var reslt = this.convertRespFr(list);
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
-        });
+        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.unFriend(req.getEmail(), req.getEmailFriend())).flatMap(list -> ServerResponse.ok().bodyValue(list));
     }
 
     public Mono<ServerResponse> addFrToQueue(ServerRequest request) {
-        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.addFriendToQueue(req.getEmail(), req.getEmailFriend()).flatMap(list -> ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(list)));
+        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.addFriendToQueue(req.getEmail(), req.getEmailFriend()).flatMap(list -> ServerResponse.ok().bodyValue(list)));
     }
 
     public Mono<ServerResponse> getQueueFr(ServerRequest request) {
@@ -64,7 +61,7 @@ public class SocialHandler {
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(reslt);
         });
     }
-    public Mono<ServerResponse> unAddFrReq(ServerRequest serverRequest) {
-        return userCrud.unAddFrReq(serverRequest.queryParam("email").get(), serverRequest.queryParam("emailFr").get()).flatMap(list -> ServerResponse.ok().bodyValue(list));
+    public Mono<ServerResponse> unAddFrToQueue(ServerRequest serverRequest) {
+        return userCrud.unAddToQueue(serverRequest.queryParam("email").get(), serverRequest.queryParam("emailFr").get()).flatMap(list -> ServerResponse.ok().bodyValue(list));
     }
 }

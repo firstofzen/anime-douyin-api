@@ -85,11 +85,11 @@ public class UserCrud {
     }
 
     public Mono<ArrayList<String>> addFriendToQueue(@NonNull String email, @NonNull String emailFriend) {
-        return this.getUser(email).flatMap(userInfo -> {
+        return this.getUser(emailFriend).flatMap(userInfo -> {
             var upda = new Update();
             var queueFr = userInfo.getQueueAddFr();
             var notifi = userInfo.getNotification();
-            queueFr.add(emailFriend);
+            queueFr.add(email);
             var isRead = notifi.get(0);
             if (isRead.getAsString("isRead").equals("false")) {
                 var jsonObj1__ = new JSONObject();
@@ -136,7 +136,7 @@ public class UserCrud {
         });
     }
 
-    public Mono<ArrayList<String>> unAddFrReq(@NonNull String email, @NonNull String emailFr) {
+    public Mono<ArrayList<String>> unAddToQueue(@NonNull String email, @NonNull String emailFr) {
         AtomicReference<ArrayList<String>> list = new AtomicReference<>();
         return this.getUser(emailFr).flatMap(usrFr -> {
             var queueFr = usrFr.getQueueAddFr();
@@ -148,8 +148,8 @@ public class UserCrud {
         }).map(updR -> list.get());
     }
 
-    public Flux<JSONObject> getUserByPrefixName(@NonNull String prefix) {
-        return mongoTemplate.find(Query.query(Criteria.where("name").regex("^" + prefix)), UserAccount.class, "UserAccount").map(ele -> {
+    public Flux<JSONObject> getUserByPrefixName(@NonNull String prefix, @NonNull String email) {
+        return mongoTemplate.find(Query.query(Criteria.where("name").regex("^" + prefix)), UserAccount.class, "UserAccount").filter(ele -> !ele.getEmail().contains(email)).map(ele -> {
             var jsonObj = new JSONObject();
             jsonObj.appendField("image", ele.getAttributes().get("image").toString());
             jsonObj.appendField("name", ele.getName());

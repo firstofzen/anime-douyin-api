@@ -81,7 +81,7 @@ public class HomeHandler {
     }
 
     public Mono<ServerResponse> searchFrByPrefixName(ServerRequest serverRequest) {
-        return userCrud.getUserByPrefixName(serverRequest.queryParam("prefixNameFr").get()).collectList().flatMap(list -> {
+        return userCrud.getUserByPrefixName(serverRequest.queryParam("prefixNameFr").get(), serverRequest.queryParam("email").get()).collectList().flatMap(list -> {
             var jsonArr = new JSONArray();
             list.forEach(jsonArr::appendElement);
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue(jsonArr);

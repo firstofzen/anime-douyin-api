@@ -89,7 +89,7 @@ public class UserCrud {
             var upda = new Update();
             var queueFr = userInfo.getQueueAddFr();
             var notifi = userInfo.getNotification();
-            queueFr.add(email);
+            if(!queueFr.contains(email)){queueFr.add(email);}
             var isRead = notifi.get(0);
             if (isRead.getAsString("isRead").equals("false")) {
                 var jsonObj1__ = new JSONObject();

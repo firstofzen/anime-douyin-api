@@ -29,7 +29,7 @@ public class SocialHandler {
     }
 
     public Mono<ServerResponse> unFriend(ServerRequest request) {
-        return request.bodyToMono(FriendReq.class).flatMap(req -> userCrud.unFriend(req.getEmail(), req.getEmailFriend())).flatMap(list -> ServerResponse.ok().bodyValue(list));
+        return userCrud.unFriend(request.queryParam("email").get(), request.queryParam("emailFr").get()).flatMap(list -> ServerResponse.ok().bodyValue(list));
     }
 
     public Mono<ServerResponse> addFrToQueue(ServerRequest request) {
